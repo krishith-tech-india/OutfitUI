@@ -42,3 +42,4 @@ jobs:
                   key: ${{ secrets.HOSTINGER_UI_SSH_KEY }}
                   source: "./dist/*"
                   target: "/home/u862144203/domains/krishivaweb.com/public_html/outfit"
+                  strip_components: 1
