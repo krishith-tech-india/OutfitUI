@@ -23,6 +23,16 @@ jobs:
                   npm install
                   npm run build
 
+            - name: Clean target directory on Hostinger
+              uses: appleboy/ssh-action@v0.1.10
+              with:
+                  host: ${{ secrets.HOSTINGER_HOST }}
+                  username: ${{ secrets.HOSTINGER_USER }}
+                  port: ${{ secrets.HOSTINGER_PORT }}
+                  key: ${{ secrets.HOSTINGER_UI_SSH_KEY }}
+                  script: |
+                      rm -rf /home/u862144203/domains/krishivaweb.com/public_html/outfit/*
+
             - name: Deploy to Hostinger via SCP
               uses: appleboy/scp-action@v0.1.3
               with:
