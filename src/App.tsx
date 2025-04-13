@@ -5,7 +5,7 @@ function App() {
 
   return (
     <>
-      <div>Hello, Krupa ci/cd is configured
+      <div>Hello, VirnBhai, Demo CI.CD
       </div>
     </>
   )
