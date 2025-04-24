@@ -1,7 +1,26 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "compilerOptions": {
+    "target": "ESNext", // Latest ECMAScript version
+    "module": "ESNext", // ES modules for module code generation
+    "lib": ["ES2020", "DOM", "DOM.Iterable"], // Libraries for compilation
+    "jsx": "react-jsx", // Specifies JSX runtime for React
+    "moduleResolution": "node", // Node.js style module resolution
+    "esModuleInterop": true, // Enables interoperability between CommonJS and ES Modules
+    "skipLibCheck": true, // Skip type checking of declarations
+    "forceConsistentCasingInFileNames": true, // Enforces consistent file naming
+    "noEmit": true, // Does not emit output files (since we're not compiling to JS directly)
+    "isolatedModules": true, // Treats each file as a separate module
+    "resolveJsonModule": true, // Allows importing JSON modules
+    "allowSyntheticDefaultImports": true, // Allows default imports from modules with no default export
+    "strict": false, // Enables all strict type-checking options
+    "noUnusedLocals": true, // Reports unused local variables
+    "noUnusedParameters": true, // Reports unused function parameters,
+    "noImplicitAny": false,
+    "baseUrl": "./", // Base URL for module resolution
+    "paths": {
+      "@src/*": ["src/*"] // Path mapping for easier imports
+    }
+  },
+  "exclude": ["node_modules", "build", "dist"], // Directories to exclude from compilation
+  "include": ["src"] // Directories to include in compilation
 }
