@@ -1,9 +1,16 @@
-import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import { Login } from "./Page/Login/Login";
+import Signup from "./Page/SignUp/Signup";
+import Dashboard from "./Page/Dashboard/Dashboard";
 
 function App() {
 	return (
 		<>
-			<div>Hello, VirenBhai, Demo CI.CD testing new data</div>
+			 <Routes>
+            	<Route path="/" element={<Login/>}/>
+            	<Route path="/signup" element={<Signup/>}/>
+				<Route path="/dashboard" element={<Dashboard/>}/>
+        	</Routes>
 		</>
 	);
 }
