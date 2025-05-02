@@ -1,18 +1,19 @@
 import { Form, Button, Input, notification,  NotificationArgsProps } from "antd";
-import { useState } from "react";
-import {  Link , Navigate, useNavigate} from "react-router-dom";
-import axios from "axios";
+import {  Link , useNavigate} from "react-router-dom";
+import { useAuthenticateMutation } from "@src/redux/reducers/api/authApi";
+import { loggedInUser } from "@src/helpers/loggedInUser";
 
 type notificationType = "success" | "error";
 type NotificationPlacement = NotificationArgsProps['placement'];
 
 function LoginForm(){
     const navigate = useNavigate()
-    const [login, setLogin] = useState(false);
     const [form] = Form.useForm();
     const [api, contextHolder] = notification.useNotification();
 
-    const openNotificatioon = (type: notificationType, placement: NotificationPlacement) =>{
+    const [authenticate,{isLoading}] = useAuthenticateMutation();
+    
+    const openNotification = (type: notificationType, placement: NotificationPlacement) =>{
         api[type.toLowerCase()]({
             message: type ==="success" ? "Login Successfully!" : "Login Faild!",
             description: type === "success" ? "Your are Login Successfully!" : "Invalid credentials. Please try again.",
@@ -22,26 +23,25 @@ function LoginForm(){
         })
     }
     const onLogin = async (value:any)=>{
-      
-         setLogin(true);
         try {
-            let data = {
+            const data = {
                 emailOrPhone: value.emailOrPhone,
                 password: value.password,
             }
-            let url = "https://api.krishivaweb.com/api/User/authenticate"
           
-            const response = await axios.post(url, data);
-           
-            openNotificatioon('success', 'bottomRight');
-            form.resetFields();
-            navigate("/dashboard")
+            const response = await authenticate(data).unwrap();
+            
+            if(response.data){
+                openNotification('success', 'bottomRight');
+                form.resetFields();
+                navigate("/dashboard");
+                loggedInUser.setUser(response.data);
+            }
+
         } catch (error) {
-            openNotificatioon('error', 'bottomRight')
+            openNotification('error', 'bottomRight')
         }
-        finally{
-            setLogin(false)
-        }
+        
     }
     return (
         <>
@@ -86,7 +86,7 @@ function LoginForm(){
                 </div>
                 <Form.Item>
                     {contextHolder}
-                    <Button type="primary" htmlType="submit" className="w-full" color="pink" variant="solid" loading={login}>
+                    <Button type="primary" htmlType="submit" className="w-full" color="pink" variant="solid" loading={isLoading}>
                     Submit
                  </Button>
                 </Form.Item>

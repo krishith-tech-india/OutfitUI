@@ -1,7 +1,7 @@
 import Cookies from "universal-cookie";
 import IVendor from "@src/interface/common/IVendor";
 import ILocalStorageColumns from "@src/interface/loggedInUser/ILocalStorageColumns";
-import ILocalStorageUser from "@src/interface/loggedInUser/ILocalStorageUser";
+import ILocalStorageToken from "@src/interface/loggedInUser/ILocalStorageToken";
 
 const cookies = new Cookies();
 
@@ -11,40 +11,29 @@ export const loggedInUser = {
   removeUser,
   setUserCookie,
 
-  getDefaultVendor,
-  setDefaultVendor,
-  removeDefaultVendor,
-
   setColumnsForGrid,
   getColumnsForGrid,
   removeColumnsForGrid,
 };
 
-function getUser(): ILocalStorageUser {
+function getUser(): ILocalStorageToken {
   if (localStorage.getItem("user") !== null && localStorage.getItem("user") !== "") {
     const userFromLocalStorage: string = localStorage.getItem("user");
     if (userFromLocalStorage !== null) {
-      const user: ILocalStorageUser = JSON.parse(userFromLocalStorage) as ILocalStorageUser;
-      if (user && user.token) {
-        return user;
-        //const userCookie = cookies.get("_swSessionUser_Id");
-        //if (userCookie) {
-        //}
-        // Uncomment below to make Switch Back work in local
-        // return user;
-      }
+      const user: ILocalStorageToken = JSON.parse(userFromLocalStorage) as ILocalStorageToken;
+      return user.data;
     }
   }
 
   return null;
 }
 
-function setUser(user: ILocalStorageUser): void {
+function setUser(user: ILocalStorageToken): void {
   const userData: string = JSON.stringify(user);
   localStorage.setItem("user", userData);
 }
 
-function setUserCookie(user: ILocalStorageUser): void {
+function setUserCookie(user: ILocalStorageToken): void {
   if (user !== null && user.token) {
     cookies.set("_swSessionUser_Id", user.token, {
       path: "/",
@@ -85,26 +74,6 @@ function removeUser(): void {
     secure: true,
     domain: ".syncware.com",
   });
-}
-
-function setDefaultVendor(vendor: IVendor): void {
-  const vendorData: string = JSON.stringify(vendor);
-  localStorage.setItem("defaultVendor", vendorData);
-}
-
-function removeDefaultVendor(): void {
-  localStorage.removeItem("defaultVendor");
-}
-
-function getDefaultVendor(): IVendor {
-  if (localStorage.getItem("defaultVendor") !== null) {
-    const defaultVendorItem = localStorage.getItem("defaultVendor");
-    if (defaultVendorItem !== null) {
-      return JSON.parse(defaultVendorItem) as IVendor;
-    }
-  }
-
-  return null;
 }
 
 function setColumnsForGrid(columns: ILocalStorageColumns): void {

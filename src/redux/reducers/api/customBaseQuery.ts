@@ -7,7 +7,7 @@ export const customBaseQuery = (url = config.apiUrl): BaseQueryFn => {
   return fetchBaseQuery({
     baseUrl: url,
     prepareHeaders: (headers: Headers) => {
-      const token = loggedInUser.getUser()?.token;
+      const token = loggedInUser.getUser();
       headers.set("Content-Type", "application/json");
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
