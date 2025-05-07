@@ -30,12 +30,11 @@ function LoginForm(){
             }
           
             const response = await authenticate(data).unwrap();
-            
             if(response.data){
                 openNotification('success', 'bottomRight');
                 form.resetFields();
                 navigate("/dashboard");
-                loggedInUser.setUser(response.data);
+                loggedInUser.setUserToken(response);
             }
 
         } catch (error) {

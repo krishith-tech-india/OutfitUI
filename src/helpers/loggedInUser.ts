@@ -1,13 +1,12 @@
 import Cookies from "universal-cookie";
-import IVendor from "@src/interface/common/IVendor";
 import ILocalStorageColumns from "@src/interface/loggedInUser/ILocalStorageColumns";
 import ILocalStorageToken from "@src/interface/loggedInUser/ILocalStorageToken";
 
 const cookies = new Cookies();
 
 export const loggedInUser = {
-  getUser,
-  setUser,
+  getUserToken,
+  setUserToken,
   removeUser,
   setUserCookie,
 
@@ -16,21 +15,21 @@ export const loggedInUser = {
   removeColumnsForGrid,
 };
 
-function getUser(): ILocalStorageToken {
-  if (localStorage.getItem("user") !== null && localStorage.getItem("user") !== "") {
-    const userFromLocalStorage: string = localStorage.getItem("user");
+function getUserToken(): ILocalStorageToken {
+  if (localStorage.getItem("userToken") !== null && localStorage.getItem("userToken") !== "") {
+    const userFromLocalStorage: string = localStorage.getItem("userToken");
     if (userFromLocalStorage !== null) {
-      const user: ILocalStorageToken = JSON.parse(userFromLocalStorage) as ILocalStorageToken;
-      return user.data;
+      const token: ILocalStorageToken = JSON.parse(userFromLocalStorage) as ILocalStorageToken;
+      return token.data;
     }
   }
 
   return null;
 }
 
-function setUser(user: ILocalStorageToken): void {
+function setUserToken(user: ILocalStorageToken): void {
   const userData: string = JSON.stringify(user);
-  localStorage.setItem("user", userData);
+  localStorage.setItem("userToken", userData);
 }
 
 function setUserCookie(user: ILocalStorageToken): void {
@@ -61,7 +60,7 @@ function setUserCookie(user: ILocalStorageToken): void {
 }
 
 function removeUser(): void {
-  localStorage.removeItem("user");
+  localStorage.removeItem("userToken");
   cookies.remove("_swSessionUser_Id", {
     path: "/",
     sameSite: "lax",
