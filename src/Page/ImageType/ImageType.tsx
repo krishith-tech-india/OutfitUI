@@ -9,6 +9,8 @@ import { Button, Form, Input, InputNumber, Modal, Popconfirm, Table } from "antd
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
 import { EditableColumnType, IImageType } from "@src/interface/ImageType/ImageType";
 import { Header } from "antd/es/layout/layout";
+import { Pagination } from "antd";
+import { useNotification } from "@src/hooks/useNotification";
 
 function ImageType() {
   const [deleteImageType] = useDeleteImageTypeMutation();
@@ -21,6 +23,15 @@ function ImageType() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addForm] = Form.useForm();
   const [addImageType] = useAddImageTypeMutation();
+  const [currentPage, setCurrentPage] = useState(1);
+  const notificationSuccess = useNotification({ type: "success" });
+  const notificationError = useNotification({ type: "error" });
+  const pageSize = 7;
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return imagetype.slice(startIndex, startIndex + pageSize);
+  }, [imagetype, currentPage]);
 
   const nameFilters = useMemo(() => {
     const uniqueNames = Array.from(new Set(imagetype.map((item) => item.name)));
@@ -40,6 +51,9 @@ function ImageType() {
       await deleteImageType(id).unwrap();
       setImageType((prev) => prev.filter((item) => item.id.toString() !== id));
       getImageTypeAsync();
+      console.log("before notification");
+      notificationSuccess("Delete successfully!!");
+      console.log("after Notification");
     } catch (error) {
       console.error("Delete failed", error);
     }
@@ -79,8 +93,10 @@ function ImageType() {
       setIsModalOpen(false);
       addForm.resetFields();
       getImageTypeAsync(); // Refresh data
+      notificationSuccess("Image Type Added Successfully!!");
     } catch (error) {
       console.error("Add failed:", error);
+      notificationError("data not added!");
     }
   };
 
@@ -122,6 +138,7 @@ function ImageType() {
       filterMode: "tree",
       onFilter: (value, record) => record.name === value,
       editable: true,
+      width: "30%",
     },
     {
       title: "Description",
@@ -132,6 +149,7 @@ function ImageType() {
       filterSearch: true,
       filterMode: "tree",
       onFilter: (value, record) => record.description === value,
+      width: "40%",
     },
     {
       title: "Action",
@@ -148,19 +166,19 @@ function ImageType() {
             </Popconfirm>
           </span>
         ) : (
-          <div className="lg:flex justify-evenly  sm:block ">
-            <div className="text-blue-400 cursor-pointer">
+          <div className="lg:flex justify-start items-center  sm:block ">
+            <div className="text-blue-400 cursor-pointer mx-3">
               <EditFilled onClick={() => edit(record)} />
             </div>
             <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id.toString())}>
-              <div className="text-red-400 cursor-pointer">
+              <div className="text-red-400 cursor-pointer mx-3">
                 <DeleteFilled />
               </div>
             </Popconfirm>
           </div>
         );
       },
-      width: "10%",
+      width: "15%",
     },
   ];
 
@@ -205,8 +223,13 @@ function ImageType() {
       >
         <div className=" text-2xl font-bold ">Image Type</div>
       </Header>
-      <div className="m-5 flex justify-end items-center">
-        <Button type="primary" onClick={() => setIsModalOpen(true)}>
+      <div className="m-5 flex justify-end items-center ">
+        <Button
+          type="primary"
+          onClick={() => setIsModalOpen(true)}
+          style={{ backgroundColor: "#98c6d4", color: "black" }}
+          variant="solid"
+        >
           Add Image Type
         </Button>
       </div>
@@ -236,16 +259,24 @@ function ImageType() {
                   },
                 }}
                 bordered
-                dataSource={imagetype}
+                dataSource={paginatedData}
                 columns={mergedColumns as any}
                 rowClassName="editable-row"
-                pagination={{ onChange: cancel }}
+                pagination={false}
                 size="large"
+              />
+              <Pagination
+                align="end"
+                current={currentPage}
+                pageSize={pageSize}
+                total={imagetype.length}
+                onChange={(page) => setCurrentPage(page)}
+                style={{ textAlign: "right", marginTop: 16 }}
               />
             </Form>
           </>
         ) : (
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center mt-50">
             <p>No Data Available to Show!!!!</p>
           </div>
         )}

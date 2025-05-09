@@ -1,10 +1,9 @@
-import { useGetAllImageTypeMutation } from "@src/redux/reducers/api/ImageType";
+//import { useGetAllImageTypeMutation } from "@src/redux/reducers/api/ImageType";
 import { useEffect, useState } from "react";
-import { Spin } from "antd";
 
 function Users() {
-  const [data, setData] = useState<any[]>([]);
-  const [ImageTypeApi, { isLoading }] = useGetAllImageTypeMutation();
+  const [data] = useState<any[]>([]);
+  // const [ImageTypeApi, { isLoading }] = useGetAllImageTypeMutation();
   const getUserAsync = async () => {
     try {
       //const response = await ImageTypeApi().unwrap();
@@ -15,7 +14,7 @@ function Users() {
   };
   useEffect(() => {
     getUserAsync();
-  }, []);
+  }, [data]);
 
   return (
     <>
@@ -27,8 +26,8 @@ function Users() {
             ))}
           </ul>
         ) : (
-          <div className="flex justify-center items-center h-[700px]">
-            <Spin size="large" />
+          <div className="flex justify-center items-center mt-50">
+            <p>No Data Available to Show!!!!</p>
           </div>
         )}
       </div>
