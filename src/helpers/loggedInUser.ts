@@ -1,110 +1,56 @@
 import Cookies from "universal-cookie";
-import IVendor from "@src/interface/common/IVendor";
 import ILocalStorageColumns from "@src/interface/loggedInUser/ILocalStorageColumns";
-import ILocalStorageUser from "@src/interface/loggedInUser/ILocalStorageUser";
+import ILocalStorageToken from "@src/interface/loggedInUser/ILocalStorageUser";
 
 const cookies = new Cookies();
 
 export const loggedInUser = {
-  getUser,
-  setUser,
+  getUserToken,
+  setUserToken,
   removeUser,
   setUserCookie,
-
-  getDefaultVendor,
-  setDefaultVendor,
-  removeDefaultVendor,
 
   setColumnsForGrid,
   getColumnsForGrid,
   removeColumnsForGrid,
 };
 
-function getUser(): ILocalStorageUser {
-  if (localStorage.getItem("user") !== null && localStorage.getItem("user") !== "") {
-    const userFromLocalStorage: string = localStorage.getItem("user");
+function getUserToken(): string {
+  if (localStorage.getItem("userToken") !== null && localStorage.getItem("userToken") !== "") {
+    const userFromLocalStorage: string = localStorage.getItem("userToken");
     if (userFromLocalStorage !== null) {
-      const user: ILocalStorageUser = JSON.parse(userFromLocalStorage) as ILocalStorageUser;
-      if (user && user.token) {
-        return user;
-        //const userCookie = cookies.get("_swSessionUser_Id");
-        //if (userCookie) {
-        //}
-        // Uncomment below to make Switch Back work in local
-        // return user;
-      }
+      const token: ILocalStorageToken = JSON.parse(userFromLocalStorage) as ILocalStorageToken;
+      return token.data;
     }
   }
 
   return null;
 }
 
-function setUser(user: ILocalStorageUser): void {
+function setUserToken(user: ILocalStorageToken): void {
   const userData: string = JSON.stringify(user);
-  localStorage.setItem("user", userData);
+  localStorage.setItem("userToken", userData);
 }
 
-function setUserCookie(user: ILocalStorageUser): void {
-  if (user !== null && user.token) {
-    cookies.set("_swSessionUser_Id", user.token, {
+function setUserCookie(userToken: ILocalStorageToken): void {
+  if (userToken !== null && userToken.data) {
+    cookies.set("_swSessionUser_Id", userToken.data, {
       path: "/",
       sameSite: "lax",
       secure: true,
       domain: ".syncware.com",
     });
-
-    if (user.vendor) {
-      cookies.set("_swSessionUser_XVendor", user.vendor.code, {
-        path: "/",
-        sameSite: "lax",
-        secure: true,
-        domain: ".syncware.com",
-      });
-    } else {
-      cookies.set("_swSessionUser_XVendor", user.name, {
-        path: "/",
-        sameSite: "lax",
-        secure: true,
-        domain: ".syncware.com",
-      });
-    }
   }
 }
 
 function removeUser(): void {
-  localStorage.removeItem("user");
+  localStorage.removeItem("userToken");
   cookies.remove("_swSessionUser_Id", {
     path: "/",
     sameSite: "lax",
     secure: true,
     domain: ".syncware.com",
   });
-  cookies.remove("_swSessionUser_XVendor", {
-    path: "/",
-    sameSite: "lax",
-    secure: true,
-    domain: ".syncware.com",
-  });
-}
-
-function setDefaultVendor(vendor: IVendor): void {
-  const vendorData: string = JSON.stringify(vendor);
-  localStorage.setItem("defaultVendor", vendorData);
-}
-
-function removeDefaultVendor(): void {
-  localStorage.removeItem("defaultVendor");
-}
-
-function getDefaultVendor(): IVendor {
-  if (localStorage.getItem("defaultVendor") !== null) {
-    const defaultVendorItem = localStorage.getItem("defaultVendor");
-    if (defaultVendorItem !== null) {
-      return JSON.parse(defaultVendorItem) as IVendor;
-    }
-  }
-
-  return null;
 }
 
 function setColumnsForGrid(columns: ILocalStorageColumns): void {

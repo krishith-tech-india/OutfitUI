@@ -1,6 +1,6 @@
 import { saveAs } from "@progress/kendo-file-saver";
-import { AxiosError } from "axios";
 import { loggedInUser } from "./loggedInUser";
+import { AxiosError } from "axios/index";
 
 export const handle = {
   handleResponse,

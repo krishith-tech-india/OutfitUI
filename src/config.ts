@@ -4,7 +4,7 @@ export const config = {
   //apiUrl: "https://api-admin.syncware.com/api/v1/admin",
 
   //UAT
-  apiUrl: "https://replenish-api-uat.syncware.com:50994/api/v1/retailer",
+  apiUrl: import.meta.env.VITE_BASE_API_URL,
 
   //DEV
   //apiUrl: "https://api-dev-admin.syncware.com/api/v1/admin",
