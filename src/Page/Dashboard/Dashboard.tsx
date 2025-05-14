@@ -31,14 +31,26 @@ function Dashboard() {
             style={{ backgroundColor: "transparent" }}
             selectedKeys={[getMenukey()]}
           >
-            <Menu.Item key="1" icon={<UserOutlined />} style={{ color: "black" }}>
+            <Menu.Item
+              key="1"
+              icon={<UserOutlined />}
+              style={{ color: "black", backgroundColor: getMenukey() === "1" ? "#FF6921" : "transparent" }}
+            >
               <Link to="/dashboard/users">Users</Link>
             </Menu.Item>
-            <Menu.Item key="2" icon={<FileImageFilled />} style={{ color: "black" }}>
+            <Menu.Item
+              key="2"
+              icon={<FileImageFilled />}
+              style={{ color: "black", backgroundColor: getMenukey() === "2" ? "#FF6921" : "transparent" }}
+            >
               <Link to="/dashboard/imagetype">ImageType</Link>
             </Menu.Item>
-            <Menu.Item key="3" icon={<ProductFilled />} style={{ color: "black" }}>
-              <Link to="/dashboard/product">Product List</Link>
+            <Menu.Item
+              key="3"
+              icon={<ProductFilled />}
+              style={{ color: "black", backgroundColor: getMenukey() === "3" ? "#FF6921" : "transparent" }}
+            >
+              <Link to="/dashboard/products">Product List</Link>
             </Menu.Item>
           </Menu>
         </Sider>

@@ -37,6 +37,12 @@ export const ImageTypeApi = createApi({
         //body: JSON.stringify(), // The data you want to send in the request body (e.g., { username, password })
       }),
     }),
+    ImageTypeExistByName: builder.mutation<any, string>({
+      query: (name: string) => ({
+        url: `ImageType/ImageTypeExistByName/${name}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -44,3 +50,4 @@ export const { useGetAllImageTypeMutation } = ImageTypeApi;
 export const { useDeleteImageTypeMutation } = ImageTypeApi;
 export const { useUpdateImageTypeMutation } = ImageTypeApi;
 export const { useAddImageTypeMutation } = ImageTypeApi;
+export const { useImageTypeExistByNameMutation } = ImageTypeApi;

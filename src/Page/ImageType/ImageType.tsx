@@ -4,13 +4,14 @@ import {
   useGetAllImageTypeMutation,
   useDeleteImageTypeMutation,
   useUpdateImageTypeMutation,
+  useImageTypeExistByNameMutation,
 } from "@src/redux/reducers/api/ImageType";
 import { Button, Form, Input, InputNumber, Modal, Popconfirm, Table } from "antd";
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
 import { EditableColumnType, IImageType } from "@src/interface/ImageType/ImageType";
 import { Header } from "antd/es/layout/layout";
 import { Pagination } from "antd";
-import { useNotification } from "@src/hooks/useNotification";
+import AddImageType from "./AddImageType";
 
 function ImageType() {
   const [deleteImageType] = useDeleteImageTypeMutation();
@@ -21,12 +22,10 @@ function ImageType() {
   const [form] = Form.useForm();
   const isEditing = (Record: IImageType) => Record.id.toString() === editingkey;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [addForm] = Form.useForm();
   const [addImageType] = useAddImageTypeMutation();
+  const [AddImageTypeForm] = Form.useForm();
   const [currentPage, setCurrentPage] = useState(1);
-  const notificationSuccess = useNotification({ type: "success" });
-  const notificationError = useNotification({ type: "error" });
-  const pageSize = 7;
+  const pageSize = 10;
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
@@ -51,9 +50,6 @@ function ImageType() {
       await deleteImageType(id).unwrap();
       setImageType((prev) => prev.filter((item) => item.id.toString() !== id));
       getImageTypeAsync();
-      console.log("before notification");
-      notificationSuccess("Delete successfully!!");
-      console.log("after Notification");
     } catch (error) {
       console.error("Delete failed", error);
     }
@@ -73,7 +69,7 @@ function ImageType() {
       const row = (await form.validateFields()) as IImageType;
       const newData = [...imagetype];
       const index = newData.findIndex((item) => item.id.toString() === id);
-      console.log(index);
+
       if (index > -1) {
         const item = newData[index];
         await updateImageType({ id, data: row }).unwrap();
@@ -88,15 +84,13 @@ function ImageType() {
 
   const handleAdd = async () => {
     try {
-      const values = await addForm.validateFields();
+      const values = await AddImageTypeForm.validateFields();
       await addImageType(values).unwrap();
       setIsModalOpen(false);
-      addForm.resetFields();
+      AddImageTypeForm.resetFields();
       getImageTypeAsync(); // Refresh data
-      notificationSuccess("Image Type Added Successfully!!");
     } catch (error) {
       console.error("Add failed:", error);
-      notificationError("data not added!");
     }
   };
 
@@ -134,7 +128,6 @@ function ImageType() {
       dataIndex: "name",
       key: "name",
       filters: nameFilters, // 🔹 Use dynamic filters here
-      filterSearch: true,
       filterMode: "tree",
       onFilter: (value, record) => record.name === value,
       editable: true,
@@ -146,7 +139,6 @@ function ImageType() {
       key: "description",
       editable: true,
       filters: descriptionFilters,
-      filterSearch: true,
       filterMode: "tree",
       onFilter: (value, record) => record.description === value,
       width: "40%",
@@ -214,38 +206,28 @@ function ImageType() {
       <Header
         style={{
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           alignItems: "center",
-          color: "black",
-          backgroundColor: "#524d78",
-          marginTop: "10px",
+          color: "chocolate",
+          backgroundColor: "transparent",
+          marginLeft: "-35px",
         }}
       >
-        <div className=" text-2xl font-bold ">Image Type</div>
+        <div className=" text-4xl font-bold ">Image Type</div>
       </Header>
       <div className="m-5 flex justify-end items-center ">
         <Button
           type="primary"
           onClick={() => setIsModalOpen(true)}
-          style={{ backgroundColor: "#98c6d4", color: "black" }}
+          style={{ backgroundColor: "gray", color: "white" }}
           variant="solid"
         >
           Add Image Type
         </Button>
       </div>
+
       <Modal title="Add Image Type" visible={isModalOpen} onOk={handleAdd} onCancel={() => setIsModalOpen(false)}>
-        <Form form={addForm} layout="vertical">
-          <Form.Item name="name" label="Name" rules={[{ required: true, message: "Please enter name" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: true, message: "Please enter description" }]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
+        <AddImageType addImagetypeForm={AddImageTypeForm} />
       </Modal>
 
       <div>
