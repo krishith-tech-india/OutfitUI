@@ -7,6 +7,8 @@ import { store } from "./redux/store/store";
 import Users from "./Page/Users/Users";
 import ImageType from "./Page/ImageType/ImageType";
 import ProductList from "./Page/ProductList/ProductList";
+import Roles from "./Page/Roles/Roles";
+import GetOrderStatus from "./Page/OrderStatus/GetOrderStatus";
 
 function App() {
   return (
@@ -18,7 +20,9 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />}>
             <Route path="users" element={<Users />} />
             <Route path="imagetype" element={<ImageType />} />
+            <Route path="roles" element={<Roles />} />
             <Route path="products" element={<ProductList />} />
+            <Route path="getorderstatus" element={<GetOrderStatus />} />
           </Route>
         </Routes>
       </Provider>

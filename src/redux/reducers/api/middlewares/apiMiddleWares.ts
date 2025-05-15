@@ -4,6 +4,7 @@ import { orderHistoryApi } from "../orderHIstoryApi";
 import { ImageTypeApi } from "../ImageType";
 import { UserApi } from "../User";
 import { RolesApi } from "../Roles";
+import { OrderStatusApi } from "../OrderStatus";
 
 const apiMiddleWares: Middleware[] = [
   authApi.middleware,
@@ -11,6 +12,7 @@ const apiMiddleWares: Middleware[] = [
   ImageTypeApi.middleware,
   UserApi.middleware,
   RolesApi.middleware,
+  OrderStatusApi.middleware,
 ];
 
 export default apiMiddleWares;
