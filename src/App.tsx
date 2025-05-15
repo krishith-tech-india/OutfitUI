@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { store } from "./redux/store/store";
 import Users from "./Page/Users/Users";
 import ImageType from "./Page/ImageType/ImageType";
+import ProductList from "./Page/ProductList/ProductList";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />}>
             <Route path="users" element={<Users />} />
             <Route path="imagetype" element={<ImageType />} />
+            <Route path="products" element={<ProductList />} />
           </Route>
         </Routes>
       </Provider>

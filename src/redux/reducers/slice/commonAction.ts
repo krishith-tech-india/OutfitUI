@@ -23,7 +23,6 @@ const commonAction = createSlice({
         message: action.payload,
       };
       state.notification = notification;
-      console.log(state, action);
     },
     errorNotification(state, action: PayloadAction<string>) {
       const notification: INotification = {
