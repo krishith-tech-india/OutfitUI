@@ -1,5 +1,11 @@
 import { Menu, Layout } from "antd";
-import { UserOutlined, ProductFilled, FileImageFilled } from "@ant-design/icons";
+import {
+  UserOutlined,
+  ProductFilled,
+  FileImageFilled,
+  DeploymentUnitOutlined,
+  SlidersOutlined,
+} from "@ant-design/icons";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
 
@@ -14,8 +20,14 @@ function Dashboard() {
     if (location.pathname.includes("/dashboard/imagetype")) {
       return "2";
     }
-    if (location.pathname.includes("/dashboard/products")) {
+    if (location.pathname.includes("/dashboard/roles")) {
       return "3";
+    }
+    if (location.pathname.includes("/dashboard/products")) {
+      return "4";
+    }
+    if (location.pathname.includes("/dashboard/getorderstatus")) {
+      return "5";
     }
     return "1";
   };
@@ -47,10 +59,24 @@ function Dashboard() {
             </Menu.Item>
             <Menu.Item
               key="3"
-              icon={<ProductFilled />}
+              icon={<DeploymentUnitOutlined />}
               style={{ color: "black", backgroundColor: getMenukey() === "3" ? "#FF6921" : "transparent" }}
             >
+              <Link to="/dashboard/roles">User Roles</Link>
+            </Menu.Item>
+            <Menu.Item
+              key="4"
+              icon={<ProductFilled />}
+              style={{ color: "black", backgroundColor: getMenukey() === "4" ? "#FF6921" : "transparent" }}
+            >
               <Link to="/dashboard/products">Product List</Link>
+            </Menu.Item>
+            <Menu.Item
+              key="5"
+              icon={<SlidersOutlined />}
+              style={{ color: "black", backgroundColor: getMenukey() === "5" ? "#FF6921" : "transparent" }}
+            >
+              <Link to="/dashboard/getorderstatus">Order Status List</Link>
             </Menu.Item>
           </Menu>
         </Sider>

@@ -1,61 +1,60 @@
-import { useEffect, useMemo, useState } from "react";
+import { EditableColumnTypeOrder, IOrderStatus } from "@src/interface/OrderStatus/OrderStatus";
 import {
-  useAddImageTypeMutation,
-  useGetAllImageTypeMutation,
-  useDeleteImageTypeMutation,
-  useUpdateImageTypeMutation,
-} from "@src/redux/reducers/api/ImageType";
+  useAddOrderStatusMutation,
+  useDeleteOrderStatusMutation,
+  useGetAllOrderStatusMutation,
+  useUpdateOrderStatusMutation,
+} from "@src/redux/reducers/api/OrderStatus";
 import { Button, Form, Input, InputNumber, Modal, Popconfirm, Table } from "antd";
+import { useEffect, useState } from "react";
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
-import { EditableColumnType, IImageType } from "@src/interface/ImageType/ImageType";
 import { Header } from "antd/es/layout/layout";
-import { Pagination } from "antd";
-import AddImageType from "./AddImageType";
+import AddOrderStatusForm from "./AddOrderStatusForm";
 
-function ImageType() {
-  const [deleteImageType] = useDeleteImageTypeMutation();
-  const [imagetype, setImageType] = useState<IImageType[]>([]);
-  const [ImageTypeApi] = useGetAllImageTypeMutation();
-  const [updateImageType] = useUpdateImageTypeMutation();
+function GetOrderStatus() {
+  const [OrderData, setOrderData] = useState<IOrderStatus[]>([]);
+  const [getOrderStatus] = useGetAllOrderStatusMutation();
+  const [addOrderStatus] = useAddOrderStatusMutation();
+  const [DeleteOrderStatus] = useDeleteOrderStatusMutation();
+  const [UpdateOrderstatus] = useUpdateOrderStatusMutation();
+  const [orderForm] = Form.useForm();
+  const [addOrderForm] = Form.useForm();
   const [editingkey, setEditingKey] = useState<string>("");
-  const [form] = Form.useForm();
-  const isEditing = (Record: IImageType) => Record.id.toString() === editingkey;
+  const isEditing = (Record: IOrderStatus) => Record.id.toString() === editingkey;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [addImageType] = useAddImageTypeMutation();
-  const [AddImageTypeForm] = Form.useForm();
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
 
-  const paginatedData = useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize;
-    return imagetype.slice(startIndex, startIndex + pageSize);
-  }, [imagetype, currentPage]);
+  const getOrderStatusAnsyc = async () => {
+    try {
+      const rolesResponse = await getOrderStatus().unwrap();
+      setOrderData(rolesResponse.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const nameFilters = useMemo(() => {
-    const uniqueNames = Array.from(new Set(imagetype.map((item) => item.name)));
-    return uniqueNames.map((name) => ({
-      text: name,
-      value: name,
-    }));
-  }, [imagetype]);
-
-  const descriptionFilters = useMemo(() => {
-    const uniqueDescriptions = Array.from(new Set(imagetype.map((item) => item.description)));
-    return uniqueDescriptions.map((desc) => ({ text: desc, value: desc }));
-  }, [imagetype]);
+  const handleAdd = async () => {
+    try {
+      const values = await addOrderForm.validateFields();
+      await addOrderStatus(values).unwrap();
+      setIsModalOpen(false);
+      addOrderForm.resetFields();
+      getOrderStatusAnsyc(); // Refresh data
+    } catch (error) {
+      console.error("Add failed:", error);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteImageType(id).unwrap();
-      setImageType((prev) => prev.filter((item) => item.id.toString() !== id));
-      getImageTypeAsync();
+      await DeleteOrderStatus(id).unwrap();
+      setOrderData((prev) => prev.filter((item) => item.id.toString() !== id));
+      getOrderStatusAnsyc();
     } catch (error) {
       console.error("Delete failed", error);
     }
   };
-
-  const edit = (record: IImageType) => {
-    form.setFieldsValue({ name: "", description: "", ...record });
+  const edit = (record: IOrderStatus) => {
+    orderForm.setFieldsValue({ name: "", description: "", ...record });
     setEditingKey(record.id.toString());
   };
 
@@ -65,31 +64,19 @@ function ImageType() {
 
   const handleUpdate = async (id: string) => {
     try {
-      const row = (await form.validateFields()) as IImageType;
-      const newData = [...imagetype];
+      const row = (await orderForm.validateFields()) as IOrderStatus;
+      const newData = [...OrderData];
       const index = newData.findIndex((item) => item.id.toString() === id);
 
       if (index > -1) {
         const item = newData[index];
-        await updateImageType({ id, data: row }).unwrap();
+        await UpdateOrderstatus({ id, data: row }).unwrap();
         newData.splice(index, 1, { ...item, ...row });
         setEditingKey("");
-        getImageTypeAsync();
+        getOrderStatusAnsyc();
       }
     } catch (err: any) {
       console.error("Update failed:", err);
-    }
-  };
-
-  const handleAdd = async () => {
-    try {
-      const values = await AddImageTypeForm.validateFields();
-      await addImageType(values).unwrap();
-      setIsModalOpen(false);
-      AddImageTypeForm.resetFields();
-      getImageTypeAsync(); // Refresh data
-    } catch (error) {
-      console.error("Add failed:", error);
     }
   };
 
@@ -121,30 +108,24 @@ function ImageType() {
     );
   };
 
-  const columns: EditableColumnType[] = [
+  const columns: EditableColumnTypeOrder[] = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      filters: nameFilters, // 🔹 Use dynamic filters here
-      filterMode: "tree",
-      onFilter: (value, record) => record.name === value,
-      editable: true,
       width: "30%",
+      editable: true,
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      width: "30%",
       editable: true,
-      filters: descriptionFilters,
-      filterMode: "tree",
-      onFilter: (value, record) => record.description === value,
-      width: "40%",
     },
     {
       title: "Action",
-      dataIndex: "action",
+      width: "10%",
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -169,7 +150,6 @@ function ImageType() {
           </div>
         );
       },
-      width: "15%",
     },
   ];
 
@@ -177,7 +157,7 @@ function ImageType() {
     if (!(col as any).editable) return col;
     return {
       ...col,
-      onCell: (record: IImageType) => ({
+      onCell: (record: IOrderStatus) => ({
         record,
         inputType: "text",
         dataIndex: col.dataIndex,
@@ -187,17 +167,8 @@ function ImageType() {
     };
   });
 
-  const getImageTypeAsync = async () => {
-    try {
-      const response = await ImageTypeApi().unwrap();
-      setImageType(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    getImageTypeAsync();
+    getOrderStatusAnsyc();
   }, []);
 
   return (
@@ -212,7 +183,7 @@ function ImageType() {
           marginLeft: "-35px",
         }}
       >
-        <div className=" text-4xl font-bold ">Image Type</div>
+        <div className=" text-4xl font-bold ">Order Status List</div>
       </Header>
       <div className="m-5 flex justify-end items-center ">
         <Button
@@ -221,38 +192,29 @@ function ImageType() {
           style={{ backgroundColor: "gray", color: "white" }}
           variant="solid"
         >
-          Add Image Type
+          Add Oder Status
         </Button>
       </div>
-
       <Modal title="Add Image Type" visible={isModalOpen} onOk={handleAdd} onCancel={() => setIsModalOpen(false)}>
-        <AddImageType addImagetypeForm={AddImageTypeForm} />
+        <AddOrderStatusForm addOrderStatusForm={addOrderForm} />
       </Modal>
-
       <div>
-        {imagetype.length > 0 ? (
+        {OrderData.length > 0 ? (
           <>
-            <Form form={form} component={false}>
-              <Table<IImageType>
+            <Form form={orderForm} component={false}>
+              <Table<IOrderStatus>
                 components={{
                   body: {
                     cell: EditableCell,
                   },
                 }}
+                rowKey="id"
                 bordered
-                dataSource={paginatedData}
+                dataSource={OrderData}
                 columns={mergedColumns as any}
                 rowClassName="editable-row"
                 pagination={false}
                 size="large"
-              />
-              <Pagination
-                align="end"
-                current={currentPage}
-                pageSize={pageSize}
-                total={imagetype.length}
-                onChange={(page) => setCurrentPage(page)}
-                style={{ textAlign: "right", marginTop: 16 }}
               />
             </Form>
           </>
@@ -266,4 +228,4 @@ function ImageType() {
   );
 }
 
-export default ImageType;
+export default GetOrderStatus;
