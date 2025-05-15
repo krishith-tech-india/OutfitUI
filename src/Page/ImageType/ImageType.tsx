@@ -4,7 +4,6 @@ import {
   useGetAllImageTypeMutation,
   useDeleteImageTypeMutation,
   useUpdateImageTypeMutation,
-  useImageTypeExistByNameMutation,
 } from "@src/redux/reducers/api/ImageType";
 import { Button, Form, Input, InputNumber, Modal, Popconfirm, Table } from "antd";
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
